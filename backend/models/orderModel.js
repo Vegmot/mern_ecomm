@@ -3,6 +3,7 @@ import mongoose from 'mongoose';
 const orderSchema = mongoose.Schema(
   {
     user: {
+      // to connect ordered item list with the appropriate user
       type: mongoose.Schema.Types.ObjectId,
       required: true,
       ref: 'User',

@@ -1,5 +1,5 @@
 import express from 'express';
-import asyncHandler from 'express-async-handler';
+import asyncHandler from 'express-async-handler'; // can replace try-catch
 const router = express.Router();
 import Product from '../models/productModel.js';
 
@@ -26,7 +26,8 @@ router.get(
     if (product) {
       res.json(product);
     } else {
-      res.status(404).json({ msg: 'Product not found' });
+      res.status(404);
+      throw new Error('Product not found');
     }
   })
 );

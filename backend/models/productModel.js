@@ -16,7 +16,7 @@ const reviewSchema = mongoose.Schema(
     },
   },
   {
-    timestamps: true,
+    timestamps: true, // automatically adds createdAt and updatedAt properties
   }
 );
 
