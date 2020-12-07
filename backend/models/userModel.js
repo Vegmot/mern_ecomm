@@ -27,6 +27,9 @@ const userSchema = mongoose.Schema(
   }
 );
 
+// creating a method within the model
+// so that this can be used in somewhere else,
+// like in userController.js
 userSchema.methods.matchPassword = async function (enteredPassword) {
   return await bcrypt.compare(enteredPassword, this.password);
 };
