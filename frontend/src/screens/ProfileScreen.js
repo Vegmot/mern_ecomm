@@ -34,7 +34,7 @@ const ProfileScreen = ({ location, history }) => {
         setName(user.name);
         setEmail(user.email);
       }
-    }
+    } // esling-disable-next-line
   }, [dispatch, history, user]);
 
   const submitHandler = e => {
