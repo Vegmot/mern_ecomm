@@ -26,10 +26,6 @@ if (process.env.NODE_ENV === 'development') {
 // initializing middleware
 app.use(express.json()); // allows us to use bodyparser
 
-app.get('/', (req, res) => {
-  res.send('API is running...');
-});
-
 // defining routes
 app.use('/api/products', productRoutes);
 app.use('/api/users', userRoutes);
@@ -43,6 +39,18 @@ app.get('/api/config/paypal', (req, res) =>
 // makes the uploads/ folder static so that it can be accessed
 const __dirname = path.resolve();
 app.use('/uploads', express.static(path.join(__dirname, '/uploads')));
+
+if (process.env.NODE_ENV === 'production') {
+  app.use(express.static(path.join(__dirname, '/frontend/build')));
+
+  app.get('*', (req, res) =>
+    res.sendFile(path.resolve(__dirname, 'frontend', 'build', 'index.html'))
+  );
+} else {
+  app.get('/', (req, res) => {
+    res.send('API is running...');
+  });
+}
 
 // initializing middleware
 // handling 404 error

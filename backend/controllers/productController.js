@@ -2,12 +2,38 @@ import asyncHandler from 'express-async-handler'; // can replace try-catch
 import Product from '../models/productModel.js';
 
 // @desc    Fetch all products
-// @route   GET /api/products
+// @route   GET /api/products?={keyword} (query)
 // @access  PUBLIC
 const getProducts = asyncHandler(async (req, res) => {
-  const products = await Product.find({});
+  const pageSize = 8; // how many items per page I want (if applicable)
+  const page = Number(req.query.pageNumber) || 1;
 
-  res.json(products);
+  const keyword = req.query.keyword
+    ? {
+        name: {
+          $regex: req.query.keyword,
+          $options: 'i', // case insensitive
+        },
+      }
+    : {};
+
+  /* // Thank you Viktoras from Q&A!
+  const query = search
+    ? {
+        name: {
+          $regex: search.replace(/[-[\]{}()*+?.,\\/^$|#\s]/g, '\\$&'),
+          $options: 'i',
+        },
+      }
+    : {}; */
+
+  const count = await Product.countDocuments({ ...keyword });
+
+  const products = await Product.find({ ...keyword })
+    .limit(pageSize)
+    .skip(pageSize * (page - 1));
+
+  res.json({ products, page, pages: Math.ceil(count / pageSize) });
 });
 
 // @desc    Fetch single product
@@ -132,6 +158,18 @@ const createProductReview = asyncHandler(async (req, res) => {
   }
 });
 
+// @desc    Get top rated products
+// @route   GET /api/products/top
+// @access  Public
+const getTopProducts = asyncHandler(async (req, res) => {
+  const topItemsNumber = 3; // how many top items?
+  const products = await Product.find({})
+    .sort({ rating: -1 })
+    .limit(topItemsNumber);
+
+  res.json(products);
+});
+
 export {
   getProducts,
   getProductById,
@@ -139,4 +177,5 @@ export {
   createProduct,
   updateProduct,
   createProductReview,
+  getTopProducts,
 };
